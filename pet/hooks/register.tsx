@@ -80,7 +80,7 @@ export const register: Register = on => {
     await $.command.register({
       name: 'pet',
       description:
-        'Switch the pet to another activity, or: /pet cat | dog | otter | sleep | <activity> | hide | show | layout [wrap | shrink]',
+        'Show the pet (/pet show), or: /pet hide | cat | dog | otter | sleep | <activity> | layout [wrap | shrink]',
     })
     // The pet and the layout the person last picked, kept between sessions.
     const savedSpecies = String((await $.store.get('species')) ?? 'cat')
@@ -88,6 +88,8 @@ export const register: Register = on => {
     await $.state.set(speciesRef, species)
     const savedLayout = await $.store.get('layout')
     await $.state.set(layoutRef, savedLayout === 'shrink' ? 'shrink' : 'wrap')
+    // The pet starts hidden in every session; /pet show brings it out.
+    await $.state.set(isHidden, true)
     isWorking = false
     scene = 'sleep'
     switchTo($, 'sleep')

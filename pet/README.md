@@ -1,6 +1,6 @@
 # pet
 
-A little pixel art pet that lives in the band above the prompt in the Claude Code desktop app. It sleeps while Claude is idle, wakes up when Claude starts working, and moves between its activities, with animated transitions, until the turn ends.
+A little pixel art pet that lives in the band above the prompt in the Claude Code desktop app. It starts hidden in every session: type `/pet show` to bring it out and `/pet hide` to tuck it away. It sleeps while Claude is idle, wakes up when Claude starts working, and moves between its activities, with animated transitions, until the turn ends.
 
 ![The cat, the dog and the otter](assets/preview.png)
 
@@ -43,7 +43,7 @@ A little pixel art pet that lives in the band above the prompt in the Claude Cod
 | `/pet cat`, `/pet dog`, `/pet otter` | Switch pets (remembered between sessions) |
 | `/pet <activity>` | Jump to one of the current pet's activities, e.g. `/pet zoomies` |
 | `/pet` | Switch to a random activity |
-| `/pet hide`, `/pet show` | Hide or show the pet |
+| `/pet show`, `/pet hide` | Show or hide the pet (it starts hidden in every session) |
 | `/pet layout wrap` | When other mods crowd the band, the pet moves to its own line (default) |
 | `/pet layout shrink` | The pet keeps its spot and other band content is cut short |
 
