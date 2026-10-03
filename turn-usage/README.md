@@ -76,6 +76,10 @@ claude --plugin-dir /path/to/claude-mods/turn-usage
 
 `hooks/register.tsx` is the whole mod. It reads the five-hour window (or, with none, the session's cost) when a turn starts and again when it completes, keeps the reply's final text with its usage line, and when the desktop or the terminal draws a reply's text block, adds the line under the block that ends that reply.
 
+## Privacy
+
+turn-usage makes no network requests and sends nothing anywhere. See the [privacy policy](PRIVACY.md).
+
 ## License
 
 [MIT](../LICENSE)
