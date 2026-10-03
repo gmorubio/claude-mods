@@ -14,7 +14,9 @@ The "current session" figure is the five-hour usage window, the same one Claude'
 | --- | --- |
 | `this turn: +2%` | The session figure rose 2 points during the turn |
 | `this turn: <1%` | The turn didn't move the session figure a whole point |
-| `this turn: —` | No reading from before the turn yet (the first turn of a session) |
+| `this turn: —` | Nothing to compare against: the session's first turn ended before any reading came |
+
+A session's first turn has no reading from before it, since the figure only arrives with an API response. If the five-hour window began with that turn, the turn started it at 0%; otherwise the reading that came with the turn's first request stands in, which leaves out only that one request.
 
 The usage figure comes from the API's rate-limit headers, which report whole percentage points, so a turn's share is only as precise as that: a `+1%` can be a smaller turn that happened to cross a point. The figure is your account's, so other Claude sessions running at the same time count towards it too. With no subscription (an API key) there is no usage window and the line doesn't show.
 
