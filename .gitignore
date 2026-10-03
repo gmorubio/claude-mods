@@ -2,3 +2,5 @@
 .claude-plugin/types/
 tsconfig.json
 node_modules/
+promo/
+clarify-prompt/
