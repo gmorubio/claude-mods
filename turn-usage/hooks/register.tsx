@@ -5,6 +5,8 @@ import type { UsageNote } from '../types'
 
 // The "current session" figure in Claude's usage settings is the five-hour window.
 const WINDOW = 'five_hour'
+// The subscription windows; with one used up, a turn that still completes ran on extra usage.
+const SUBSCRIPTION_WINDOWS = ['five_hour', 'seven_day']
 const MAX_NOTES = 100
 
 const notes = atom({ plugin: 'turn-usage', key: 'notes' } as const, [] as UsageNote[])
@@ -18,8 +20,8 @@ const formatPercent = (n: number) => `${Math.round(n * 10) / 10}%`
 const formatUsd = (n: number) => (n < 0.005 ? '<\\$0.01' : `\\$${n.toFixed(2)}`)
 
 const LABELS = {
-  es: { session: 'Sesión', used: 'usado', turn: 'este turno' },
-  en: { session: 'Session', used: 'used', turn: 'this turn' },
+  es: { session: 'Sesión', used: 'usado', turn: 'este turno', extra: 'uso extra' },
+  en: { session: 'Session', used: 'used', turn: 'this turn', extra: 'extra usage' },
 }
 
 // Spanish when Claude Code's `language` setting says so, English otherwise.
@@ -51,10 +53,9 @@ function spentThisTurn(
   return firstStep === undefined ? undefined : since(firstStep)
 }
 
-// What the session has cost so far, for an account with no usage window (pay as you go).
-async function readCostUsd($: EngineInterface): Promise<number | undefined> {
-  const { cost } = await $.session.usage()
-  return cost?.usd
+// Keeps a finished reply's line, for the drawing of the block that ends it.
+async function addNote($: EngineInterface, answer: string, line: string): Promise<void> {
+  await update($, notes, (list) => [...list, { answer, line }].slice(-MAX_NOTES))
 }
 
 async function readWindow($: EngineInterface): Promise<SessionRateLimit | undefined> {
@@ -72,9 +73,10 @@ export const register: Register = (on) => {
   const afterFirstStep = new Map<string, SessionRateLimit>()
 
   on('turn.start', async ($, e, next) => {
+    const { rateLimits, cost } = await $.session.usage()
     atStart.set(e.turnId, {
-      reading: await readWindow($),
-      usd: await readCostUsd($),
+      reading: rateLimits.find((limit) => limit.kind === WINDOW),
+      usd: cost?.usd,
       startedAt: await $.clock.now(),
     })
     return next(e)
@@ -105,16 +107,27 @@ export const register: Register = (on) => {
     }
 
     const labels = await readLabels($)
-    const after = await readWindow($)
+    const { rateLimits, cost } = await $.session.usage()
+    const after = rateLimits.find((limit) => limit.kind === WINDOW)
+    const usd = cost?.usd
+    const turnUsd = usd === undefined || start?.usd === undefined ? '—' : formatUsd(Math.max(0, usd - start.usd))
+
     if (after === undefined) {
       // No usage window after a turn that reached the API: pay as you go, so show the cost.
-      const usd = await readCostUsd($)
       if (e.usage === undefined || usd === undefined) {
         return result
       }
-      const turnUsd = start?.usd === undefined ? '—' : formatUsd(Math.max(0, usd - start.usd))
       const line = `${labels.session}: ${formatUsd(usd)} · ${labels.turn}: ${turnUsd}`
-      await update($, notes, (list) => [...list, { answer, line }].slice(-MAX_NOTES))
+      await addNote($, answer, line)
+      return result
+    }
+
+    const isExtraUsage = rateLimits.some(
+      (limit) => SUBSCRIPTION_WINDOWS.includes(limit.kind) && limit.percentUsed >= 100,
+    )
+    if (isExtraUsage) {
+      const line = `${labels.session}: ${formatPercent(after.percentUsed)} ${labels.used} · ${labels.turn}: ${turnUsd} (${labels.extra})`
+      await addNote($, answer, line)
       return result
     }
 
@@ -126,7 +139,7 @@ export const register: Register = (on) => {
     }
 
     const line = `${labels.session}: ${formatPercent(after.percentUsed)} ${labels.used} · ${labels.turn}: ${spentText}`
-    await update($, notes, (list) => [...list, { answer, line }].slice(-MAX_NOTES))
+    await addNote($, answer, line)
     return result
   })
 

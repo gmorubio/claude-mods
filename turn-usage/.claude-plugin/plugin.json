@@ -1,6 +1,6 @@
 {
   "name": "turn-usage",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A dim line under each Claude reply with how much of your current session's usage limit is used and how much that turn spent, or the cost on pay as you go",
   "author": {
     "name": "Guille",

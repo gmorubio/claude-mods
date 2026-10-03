@@ -24,7 +24,15 @@ On a subscription:
 | `this turn: <1%` | The turn didn't move the session figure a whole point |
 | `this turn: —` | Nothing to compare against: the session's first turn ended before any reading came |
 
-On pay as you go, a turn under a cent shows `<$0.01`. The cost is Claude Code's estimate from the tokens and the public API prices, always in dollars whatever your billing currency, not your invoice.
+Once a subscription window (the five-hour or the weekly one) is used up, a turn that still completes ran on extra usage, so the line shows that turn's cost instead of its points:
+
+```
+Session: 100% used · this turn: $0.12 (extra usage)
+```
+
+The turn that crosses 100% is still measured in points; the cost shows from the next one.
+
+On pay as you go and extra usage, a turn under a cent shows `<$0.01`. The cost is Claude Code's estimate from the tokens and the public API prices, always in dollars whatever your billing currency, not your invoice.
 
 A session's first turn has no reading from before it, since the figure only arrives with an API response. If the five-hour window began with that turn, the turn started it at 0%; otherwise the reading that came with the turn's first request stands in, which leaves out only that one request.
 
