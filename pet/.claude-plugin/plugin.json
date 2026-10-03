@@ -1,0 +1,13 @@
+{
+  "name": "pet",
+  "version": "1.0.0",
+  "description": "A pixel art pet above the prompt in the Claude Code desktop app: a cat, a dog or an otter that sleeps while Claude is idle and plays while it works",
+  "author": {
+    "name": "Guille",
+    "url": "https://github.com/gmorubio"
+  },
+  "homepage": "https://github.com/gmorubio/claude-mods/tree/main/pet",
+  "repository": "https://github.com/gmorubio/claude-mods",
+  "keywords": ["pet", "pixel-art", "cat", "dog", "otter", "fun", "desktop"],
+  "types": "./types/index.d.ts"
+}

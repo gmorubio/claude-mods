@@ -1,0 +1,15 @@
+{
+  "name": "claude-mods",
+  "description": "Mods for Claude Code by Guille",
+  "owner": {
+    "name": "Guille",
+    "url": "https://github.com/gmorubio"
+  },
+  "plugins": [
+    {
+      "name": "pet",
+      "source": "./pet",
+      "description": "A pixel art cat, dog or otter above the prompt in the desktop app that sleeps while Claude is idle and plays while it works"
+    }
+  ]
+}
