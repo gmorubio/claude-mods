@@ -81,6 +81,10 @@ claude --plugin-dir /path/to/claude-mods/pet
 
 To add a pet, write a new file that exports a `Species` and add it to `PETS` in `register.tsx`.
 
+## Privacy
+
+pet makes no network requests and sends nothing anywhere. See the [privacy policy](PRIVACY.md).
+
 ## License
 
 [MIT](../LICENSE)
