@@ -14,6 +14,8 @@ const WINDOW_MS = 5 * 60 * 60 * 1000
 const FRESH_WINDOW_SLACK_MS = 15 * 60 * 1000
 
 const formatPercent = (n: number) => `${Math.round(n * 10) / 10}%`
+// Escaped, so a line with two amounts never reads as inline math.
+const formatUsd = (n: number) => (n < 0.005 ? '<\\$0.01' : `\\$${n.toFixed(2)}`)
 
 const LABELS = {
   es: { session: 'Sesión', used: 'usado', turn: 'este turno' },
@@ -30,7 +32,7 @@ async function readLabels($: EngineInterface): Promise<(typeof LABELS)['en']> {
 // How many points of the window a turn spent, or undefined with nothing to compare against.
 function spentThisTurn(
   after: SessionRateLimit,
-  start: { reading: SessionRateLimit | undefined; startedAt: number } | undefined,
+  start: { reading: SessionRateLimit | undefined; usd: number | undefined; startedAt: number } | undefined,
   firstStep: SessionRateLimit | undefined,
 ): number | undefined {
   const since = (from: SessionRateLimit) =>
@@ -49,19 +51,32 @@ function spentThisTurn(
   return firstStep === undefined ? undefined : since(firstStep)
 }
 
+// What the session has cost so far, for an account with no usage window (pay as you go).
+async function readCostUsd($: EngineInterface): Promise<number | undefined> {
+  const { cost } = await $.session.usage()
+  return cost?.usd
+}
+
 async function readWindow($: EngineInterface): Promise<SessionRateLimit | undefined> {
   const { rateLimits } = await $.session.usage()
   return rateLimits.find((limit) => limit.kind === WINDOW)
 }
 
 export const register: Register = (on) => {
-  // The window's reading when each turn began, and when it began, by turn id.
-  const atStart = new Map<string, { reading: SessionRateLimit | undefined; startedAt: number }>()
+  // The window's reading, the session's cost and the time when each turn began, by turn id.
+  const atStart = new Map<
+    string,
+    { reading: SessionRateLimit | undefined; usd: number | undefined; startedAt: number }
+  >()
   // For a turn that began with no reading (a session's first): the one its first request brought.
   const afterFirstStep = new Map<string, SessionRateLimit>()
 
   on('turn.start', async ($, e, next) => {
-    atStart.set(e.turnId, { reading: await readWindow($), startedAt: await $.clock.now() })
+    atStart.set(e.turnId, {
+      reading: await readWindow($),
+      usd: await readCostUsd($),
+      startedAt: await $.clock.now(),
+    })
     return next(e)
   })
 
@@ -89,12 +104,20 @@ export const register: Register = (on) => {
       return result
     }
 
+    const labels = await readLabels($)
     const after = await readWindow($)
     if (after === undefined) {
+      // No usage window after a turn that reached the API: pay as you go, so show the cost.
+      const usd = await readCostUsd($)
+      if (e.usage === undefined || usd === undefined) {
+        return result
+      }
+      const turnUsd = start?.usd === undefined ? '—' : formatUsd(Math.max(0, usd - start.usd))
+      const line = `${labels.session}: ${formatUsd(usd)} · ${labels.turn}: ${turnUsd}`
+      await update($, notes, (list) => [...list, { answer, line }].slice(-MAX_NOTES))
       return result
     }
 
-    const labels = await readLabels($)
     const spent = spentThisTurn(after, start, firstStep)
     let spentText = '—'
     if (spent !== undefined) {

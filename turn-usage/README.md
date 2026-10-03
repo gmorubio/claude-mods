@@ -8,7 +8,15 @@ Session: 39% used · this turn: <1%
 
 The "current session" figure is the five-hour usage window, the same one Claude's usage settings call "Current session".
 
+On pay as you go (an API key, Bedrock or Vertex) there is no usage window, so the line shows what the session and the turn cost instead, in US dollars, as `/cost` counts it:
+
+```
+Session: $1.84 · this turn: $0.12
+```
+
 ## How it reads
+
+On a subscription:
 
 | Shown | Meaning |
 | --- | --- |
@@ -16,9 +24,11 @@ The "current session" figure is the five-hour usage window, the same one Claude'
 | `this turn: <1%` | The turn didn't move the session figure a whole point |
 | `this turn: —` | Nothing to compare against: the session's first turn ended before any reading came |
 
+On pay as you go, a turn under a cent shows `<$0.01`. The cost is Claude Code's estimate from the tokens and the public API prices, always in dollars whatever your billing currency, not your invoice.
+
 A session's first turn has no reading from before it, since the figure only arrives with an API response. If the five-hour window began with that turn, the turn started it at 0%; otherwise the reading that came with the turn's first request stands in, which leaves out only that one request.
 
-The usage figure comes from the API's rate-limit headers, which report whole percentage points, so a turn's share is only as precise as that: a `+1%` can be a smaller turn that happened to cross a point. The figure is your account's, so other Claude sessions running at the same time count towards it too. With no subscription (an API key) there is no usage window and the line doesn't show.
+The usage figure comes from the API's rate-limit headers, which report whole percentage points, so a turn's share is only as precise as that: a `+1%` can be a smaller turn that happened to cross a point. The figure is your account's, so other Claude sessions running at the same time count towards it too.
 
 ## Language
 
@@ -30,7 +40,7 @@ Sesión: 39% usado · este turno: <1%
 
 ## Requirements
 
-- Claude Code on a Claude subscription, in the desktop app or the terminal.
+- Claude Code in the desktop app or the terminal, on a Claude subscription or pay as you go.
 - A Claude Code build with function-hook mods (`hooks/hooks.json` with `modules`).
 
 ## Install
@@ -56,7 +66,7 @@ claude --plugin-dir /path/to/claude-mods/turn-usage
 
 ## How it's built
 
-`hooks/register.tsx` is the whole mod. It reads the five-hour window when a turn starts and again when it completes, keeps the reply's final text with its usage line, and when the desktop or the terminal draws a reply's text block, adds the line under the block that ends that reply.
+`hooks/register.tsx` is the whole mod. It reads the five-hour window (or, with none, the session's cost) when a turn starts and again when it completes, keeps the reply's final text with its usage line, and when the desktop or the terminal draws a reply's text block, adds the line under the block that ends that reply.
 
 ## License
 

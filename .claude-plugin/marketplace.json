@@ -14,7 +14,7 @@
     {
       "name": "turn-usage",
       "source": "./turn-usage",
-      "description": "A dim line under each Claude reply with how much of your current session's usage limit is used and how much that turn spent"
+      "description": "A dim line under each Claude reply with how much of your current session's usage limit is used and how much that turn spent, or the cost on pay as you go"
     }
   ]
 }
