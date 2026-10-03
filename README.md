@@ -20,3 +20,7 @@ Or both at once from inside a Claude Code session:
 ```
 /plugin install pet --marketplace gmorubio/claude-mods
 ```
+
+## License
+
+[MIT](LICENSE)

@@ -80,3 +80,7 @@ claude --plugin-dir /path/to/claude-mods/pet
 - `hooks/register.tsx`: the mod itself: the `/pet` command, the sleep/wake schedule and drawing the band.
 
 To add a pet, write a new file that exports a `Species` and add it to `PETS` in `register.tsx`.
+
+## License
+
+[MIT](../LICENSE)
