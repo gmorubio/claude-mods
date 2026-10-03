@@ -1,0 +1,14 @@
+{
+  "name": "turn-usage",
+  "version": "1.0.0",
+  "description": "A dim line under each Claude reply with how much of your current session's usage limit is used and how much that turn spent",
+  "author": {
+    "name": "Guille",
+    "url": "https://github.com/gmorubio"
+  },
+  "homepage": "https://github.com/gmorubio/claude-mods/tree/main/turn-usage",
+  "repository": "https://github.com/gmorubio/claude-mods",
+  "license": "MIT",
+  "keywords": ["usage", "rate-limit", "session", "tokens", "desktop", "terminal"],
+  "types": "./types/index.d.ts"
+}

@@ -10,6 +10,11 @@
       "name": "pet",
       "source": "./pet",
       "description": "A pixel art cat, dog or otter above the prompt in the desktop app that sleeps while Claude is idle and plays while it works"
+    },
+    {
+      "name": "turn-usage",
+      "source": "./turn-usage",
+      "description": "A dim line under each Claude reply with how much of your current session's usage limit is used and how much that turn spent"
     }
   ]
 }
