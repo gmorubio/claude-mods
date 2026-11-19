@@ -3,7 +3,7 @@
 A dim line under each Claude reply that shows how much of your current session's usage limit is used, and how much the turn that just ended spent:
 
 ```
-Session: 39% used · this turn: <1%
+Session: 39% used · this turn: <1% (≈$0.03)
 ```
 
 The "current session" figure is the five-hour usage window, the same one Claude's usage settings call "Current session".
@@ -23,6 +23,7 @@ On a subscription:
 | `this turn: +2%` | The session figure rose 2 points during the turn |
 | `this turn: <1%` | The turn didn't move the session figure a whole point |
 | `this turn: —` | Nothing to compare against: the session's first turn ended before any reading came |
+| `(≈$0.12)` | What the turn would have cost on pay as you go, at the public API prices |
 
 Once a subscription window (the five-hour or the weekly one) is used up, a turn that still completes ran on extra usage, so the line shows that turn's cost instead of its points:
 
@@ -32,7 +33,7 @@ Session: 100% used · this turn: $0.12 (extra usage)
 
 The turn that crosses 100% is still measured in points; the cost shows from the next one.
 
-On pay as you go and extra usage, a turn under a cent shows `<$0.01`. The cost is Claude Code's estimate from the tokens and the public API prices, always in dollars whatever your billing currency, not your invoice.
+On a subscription, pay as you go and extra usage, a turn under a cent shows `<$0.01`. The cost is Claude Code's estimate from the tokens and the public API prices, always in dollars whatever your billing currency, not your invoice.
 
 A session's first turn has no reading from before it, since the figure only arrives with an API response. If the five-hour window began with that turn, the turn started it at 0%; otherwise the reading that came with the turn's first request stands in, which leaves out only that one request.
 
@@ -43,7 +44,7 @@ The usage figure comes from the API's rate-limit headers, which report whole per
 The line is in English, or in Spanish when Claude Code's `language` setting is Spanish (`"language": "spanish"` in `~/.claude/settings.json`):
 
 ```
-Sesión: 39% usado · este turno: <1%
+Sesión: 39% usado · este turno: <1% (≈$0.03)
 ```
 
 ## Requirements

@@ -138,7 +138,14 @@ export const register: Register = (on) => {
       spentText = spent < 1 ? '<1%' : `+${formatPercent(spent)}`
     }
 
-    const line = `${labels.session}: ${formatPercent(after.percentUsed)} ${labels.used} · ${labels.turn}: ${spentText}`
+    // What the turn would have cost on pay as you go, marked as an estimate.
+    let payAsYouGo = ''
+    if (usd !== undefined && start?.usd !== undefined) {
+      const turnCost = Math.max(0, usd - start.usd)
+      payAsYouGo = turnCost < 0.005 ? ' (<\\$0.01)' : ` (≈${formatUsd(turnCost)})`
+    }
+
+    const line = `${labels.session}: ${formatPercent(after.percentUsed)} ${labels.used} · ${labels.turn}: ${spentText}${payAsYouGo}`
     await addNote($, answer, line)
     return result
   })
